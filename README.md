@@ -21,7 +21,7 @@ Bu projenin temel amacı, **çalışanların iş sahasındaki ihmallerini azalta
 |--------------------|------------------------|------------------------------------------------------------------------------|
 | **Zehra Aktürk**   | Takım Lideri / Backend | Python, Flask, FastAPI, Proje Koordinasyonu,  GitHub Yönetimi                      |
 | **Gamze Yarımkulak**      | Görüntü İşleme    | YOLOv8, Etiketleme, Model Eğitimi                      |
-| **Lamiser Örs**   | Veritabanı Tasarımı       | MongoDB, PostgreSQL, ER Diagram, Veri Güvenliği                            |
+| **Lamiser Örs**   | Veritabanı Tasarımı       | PostgreSQL, ER Diagram, Veri Güvenliği                            |
 | **İrem Aytaç**    | Frontend Tasarımcısı    | Arayüz Hazırlama, Tasarım İlkeleri                                |
 | **Halime Buse Yalçın** | Veri Analisti | Veri Gruplandırma, Bildirim Gönderme Sistemi      |
 | **Merve Gök** | Görüntü İşleme  | Model Eğitimi, Doğruluk Oranı Artırımı, Etiketleme      |
