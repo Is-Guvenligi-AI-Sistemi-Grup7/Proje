@@ -1,0 +1,147 @@
+HELP_TEMPLATE = '''
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Yardım - İş Güvenliği Sistemi</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; line-height: 1.6; background: #f8f9fa; }
+        .navbar { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 20px 0; }
+        .navbar-content { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        .main-content { max-width: 1200px; margin: 30px auto; padding: 20px; }
+        .help-section { background: white; border-radius: 15px; padding: 30px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .btn { padding: 10px 20px; border-radius: 8px; text-decoration: none; color: white; background: #6c757d; display: inline-block; }
+        .help-section h3 { color: #333; margin: 20px 0 10px 0; }
+        .help-section ul { padding-left: 20px; margin: 10px 0; }
+        .help-section li { margin: 10px 0; }
+        .help-icon { font-size: 24px; margin-right: 10px; color: #667eea; }
+        .help-card { border: 1px solid #e9ecef; padding: 20px; border-radius: 10px; margin: 15px 0; }
+        .help-card h4 { color: #444; margin-bottom: 10px; }
+        .help-card p { color: #666; }
+        .warning-text { color: #dc3545; }
+        .success-text { color: #28a745; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <h1><i class="fas fa-question-circle"></i> Yardım ve Destek</h1>
+            <a href="/dashboard" class="btn"><i class="fas fa-arrow-left"></i> Geri Dön</a>
+        </div>
+    </nav>
+    <div class="main-content">
+        {% if user_role == 'yonetici' %}
+        <!-- Yönetici Yardım İçeriği -->
+        <div class="help-section">
+            <h2><i class="fas fa-user-shield help-icon"></i>Yönetici Kılavuzu</h2>
+            
+            <div class="help-card">
+                <h4><i class="fas fa-video"></i> Kamera Yönetimi</h4>
+                <ul>
+                    <li>Yeni kamera eklemek için "Kamera Yönetimi" sayfasındaki "Yeni Kamera Ekle" butonunu kullanın</li>
+                    <li>Kameraları aktifleştirmek/pasifleştirmek için kamera kartlarındaki ilgili butonları kullanın</li>
+                    <li>Kamera silmek için önce tüm bağlantılı ihlal kayıtlarının silindiğinden emin olun</li>
+                    <li>IP adresleri benzersiz olmalıdır</li>
+                </ul>
+            </div>
+
+            <div class="help-card">
+                <h4><i class="fas fa-desktop"></i> Canlı İzleme</h4>
+                <ul>
+                    <li>Tüm aktif kameraları tek ekranda izleyebilirsiniz</li>
+                    <li>KKD ihlalleri gerçek zamanlı olarak tespit edilir</li>
+                    <li>Kırmızı uyarılar acil müdahale gerektirir</li>
+                    <li>Sarı uyarılar potansiyel riskleri gösterir</li>
+                </ul>
+            </div>
+
+            <div class="help-card">
+                <h4><i class="fas fa-chart-bar"></i> Raporlar ve İstatistikler</h4>
+                <ul>
+                    <li><i class="fas fa-calendar-day"></i> <strong>Zaman Bazlı Raporlar:</strong>
+                        <ul>
+                            <li>Günlük ihlal özetleri</li>
+                            <li>Haftalık trend analizi</li>
+                            <li>Aylık performans değerlendirmesi</li>
+                        </ul>
+                    </li>
+                    <li><i class="fas fa-users"></i> <strong>Personel Takibi:</strong>
+                        <ul>
+                            <li>Bölüm bazlı güvenlik durumu</li>
+                            <li>Vardiya bazlı ihlal raporları</li>
+                            <li>Departman karşılaştırma grafikleri</li>
+                        </ul>
+                    </li>
+                    <li><i class="fas fa-file-export"></i> <strong>Rapor Çıktıları:</strong>
+                        <ul>
+                            <li>Excel formatında detaylı raporlar</li>
+                            <li>PDF formatında yönetici özetleri</li>
+                            <li>Otomatik e-posta raporlaması</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="help-card">
+                <h4><i class="fas fa-exclamation-triangle"></i> Sorun Giderme</h4>
+                <ul>
+                    <li class="warning-text">Kamera bağlantı hatası: IP adresini ve ağ bağlantısını kontrol edin</li>
+                    <li class="warning-text">Sistem yanıt vermiyor: Sayfayı yenileyin ve tekrar deneyin</li>
+                    <li class="warning-text">Veri kaybı: Düzenli yedekleme yapıldığından emin olun</li>
+                </ul>
+            </div>
+        </div>
+        {% else %}
+        <!-- Çalışan Yardım İçeriği -->
+        <div class="help-section">
+            <h2><i class="fas fa-hard-hat help-icon"></i>Çalışan Kılavuzu</h2>
+            
+            <div class="help-card">
+                <h4><i class="fas fa-shield-alt"></i> KKD (Kişisel Koruyucu Donanım) Kuralları</h4>
+                <ul>
+                    <li class="success-text">Baret: Her zaman takılı olmalıdır</li>
+                    <li class="success-text">İş Yeleği: Görünür ve temiz olmalıdır</li>
+                    <li class="success-text">Koruyucu Gözlük: Göz hizasında takılmalıdır</li>
+                    <li class="success-text">İş Eldiveni: İşe uygun eldiven kullanılmalıdır</li>
+                </ul>
+            </div>
+
+            <div class="help-card">
+                <h4><i class="fas fa-bell"></i> İhlal Bildirimleri</h4>
+                <ul>
+                    <li>Sistem KKD eksikliğini tespit ettiğinde otomatik uyarı verir</li>
+                    <li>Uyarıyı aldığınızda hemen eksik ekipmanı tamamlayın</li>
+                    <li>Tekrarlanan ihlaller kayıt altına alınır</li>
+                    <li>İhlal geçmişinizi "Raporlar" bölümünden görebilirsiniz</li>
+                </ul>
+            </div>
+
+            <div class="help-card">
+                <h4><i class="fas fa-user-cog"></i> Hesap Yönetimi</h4>
+                <ul>
+                    <li>Şifrenizi düzenli olarak değiştirin</li>
+                    <li>Şifreniz en az 6 karakter olmalıdır</li>
+                    <li>Hesap bilgilerinizi kimseyle paylaşmayın</li>
+                    <li>Oturumunuzu işiniz bittiğinde kapatın</li>
+                </ul>
+            </div>
+
+            <div class="help-card">
+                <h4><i class="fas fa-question-circle"></i> Sık Sorulan Sorular</h4>
+                <ul>
+                    <li><strong>S: İhlal kaydımı nasıl görüntülerim?</strong><br>
+                        C: Dashboard'da "Raporlar" bölümünden kişisel ihlal geçmişinizi görebilirsiniz.</li>
+                    <li><strong>S: Yanlış bir ihlal kaydı var, ne yapmalıyım?</strong><br>
+                        C: Yöneticinize durumu bildirin.</li>
+                    <li><strong>S: Şifremi unuttum, ne yapabilirim?</strong><br>
+                        C: Sistem yöneticinizle iletişime geçin.</li>
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
+'''
