@@ -1,0 +1,238 @@
+REPORTS_TEMPLATE = '''
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raporlar - İş Güvenliği Sistemi</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .violations-table {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .table th,
+        .table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        .table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .violation-type {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .type-baret {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .type-yelek {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .type-gozluk {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .type-eldiven {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .no-violations {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+        }
+
+        .no-violations i {
+            font-size: 60px;
+            margin-bottom: 20px;
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <h1><i class="fas fa-chart-bar"></i> İhlal Raporları</h1>
+            <a href="/dashboard" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Geri Dön</a>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        {% if session['role'] == 'yonetici' %}
+        <div class="employee-scores">
+            <h3><i class="fas fa-star"></i> Çalışan Güvenlik Puanları</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Çalışan Adı</th>
+                        <th>Güvenlik Puanı</th>
+                        <th>Toplam İhlal</th>
+                        <th>Son İhlal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for employee in employee_scores %}
+                    <tr>
+                        <td>{{ employee.name }}</td>
+                        <td>
+                            <div class="score-bar">
+                                <div class="score-fill" style="width: {{ employee.safety_score }}%">
+                                    {{ employee.safety_score }}%
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ employee.total_violations }}</td>
+                        <td>{{ employee.last_violation or 'Yok' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+        
+        <div class="violations-table">
+            <h3><i class="fas fa-exclamation-triangle"></i> Son İhlaller</h3>
+            
+            {% if violations %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Tarih/Saat</th>
+                        <th>İhlal Tipi</th>
+                        <th>Kamera</th>
+                        <th>Konum</th>
+                        <th>Açıklama</th>
+                        <th>Kullanıcı</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for violation in violations %}
+                    <tr>
+                        <td>{{ violation.detected_at }}</td>
+                        <td>
+                            <span class="violation-type type-{{ violation.violation_type.lower().split()[0] }}">
+                                {{ violation.violation_type }}
+                            </span>
+                        </td>
+                        <td>{{ violation.camera_name or 'Bilinmiyor' }}</td>
+                        <td>{{ violation.location or 'Belirtilmemiş' }}</td>
+                        <td>{{ violation.description or '-' }}</td>
+                        <td>{{ violation.user_name or 'Bilinmiyor' }}</td> 
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="no-violations">
+                <i class="fas fa-check-circle"></i>
+                <h4>Henüz ihlal kaydı bulunmuyor</h4>
+                <p>Sistem aktif olarak çalışıyor ve PPE uyumluluğu kontrol ediliyor.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <style>
+        /* ... mevcut stiller ... */
+        .employee-scores {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .score-bar {
+            width: 100%;
+            height: 25px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        .score-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            text-align: center;
+            line-height: 25px;
+            font-weight: bold;
+            transition: width 0.3s ease;
+        }
+    </style>
+</body>
+</html>
+'''
