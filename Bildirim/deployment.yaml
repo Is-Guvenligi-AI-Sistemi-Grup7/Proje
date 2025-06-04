@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: safety-notification-system
+  namespace: safety-system
+  labels:
+    app: safety-notification-system
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: safety-notification-system
+  template:
+    metadata:
+      labels:
+        app: safety-notification-system
+    spec:
+      containers:
+      - name: safety-notification-system
+        image: your-registry/safety-notification-system:latest
+        ports:
+        - containerPort: 8000
+          name: http
+        env:
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: safety-config
+              key: DB_HOST
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: safety-config
+              key: DB_PORT
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: safety-config
+              key: DB_NAME
+        - name: DEBUG
+          valueFrom:
+            configMapKeyRef:
+              name: safety-config
+              key: DEBUG
+        - name: SENDGRID_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: safety-secrets
+              key: SENDGRID_API_KEY
+        - name: TWILIO_ACCOUNT_SID
+          valueFrom:
+            secretKeyRef:
+              name: safety-secrets
+              key: TWILIO_ACCOUNT_SID
+        - name: TWILIO_AUTH_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: safety-secrets
+              key: TWILIO_AUTH_TOKEN
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: safety-secrets
+              key: DB_PASSWORD
+        volumeMounts:
+        - name: firebase-key
+          mountPath: /app/serviceAccountKey.json
+          subPath: serviceAccountKey.json
+          readOnly: true
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 15
+          periodSeconds: 15
+      volumes:
+      - name: firebase-key
+        secret:
+          secretName: firebase-service-account
+          items:
+          - key: serviceAccountKey.json
+            path: serviceAccountKey.json
