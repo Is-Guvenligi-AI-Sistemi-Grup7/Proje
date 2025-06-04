@@ -236,3 +236,4 @@ REPORTS_TEMPLATE = '''
 </body>
 </html>
 '''
+
