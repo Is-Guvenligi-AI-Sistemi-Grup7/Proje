@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>İş Güvenliği Yapay Zeka Sistemi</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
@@ -223,5 +224,15 @@
             </div>
         </div>
     </div>
+   <script>
+  // WebSocket bağlantısı kur
+  const socket = io("http://localhost:5000");
+
+  // Backend'ten 'new_violation' diye bir mesaj gelirse uyarı kutusu göster
+  socket.on("new_violation", (data) => {
+    alert(data.message);
+  });
+</script>
+
 </body>
 </html>
