@@ -1,0 +1,595 @@
+DASHBOARD_TEMPLATE = '''
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - İş Güvenliği Sistemi</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+            border-left: 5px solid #667eea;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .stat-card.success { border-left-color: #28a745; }
+        .stat-card.warning { border-left-color: #ffc107; }
+        .stat-card.danger { border-left-color: #dc3545; }
+
+        .stat-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+
+        .stat-card.success .stat-icon { color: #28a745; }
+        .stat-card.warning .stat-icon { color: #ffc107; }
+        .stat-card.danger .stat-icon { color: #dc3545; }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .stat-label {
+            font-size: 16px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .menu-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .menu-icon {
+            font-size: 50px;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+
+        .menu-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .menu-desc {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .recent-activity {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .activity-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f8f9fa;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #f8f9fa;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #dc3545;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .live-status {
+            display: inline-block;
+            padding: 5px 10px;
+            background: #28a745;
+            color: white;
+            border-radius: 15px;
+            font-size: 12px;
+            margin-left: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow-y: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            position: relative;
+            margin: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .navbar-content {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .stats-grid, .menu-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div>
+                <h1><i class="fas fa-shield-alt"></i> İş Güvenliği Sistemi</h1>
+                <span class="live-status"><i class="fas fa-circle"></i> Canlı</span>
+            </div>
+            <div class="user-info">
+                <span><i class="fas fa-user"></i> {{ user_name }} ({{ 'Yönetici' if user_role == 'yonetici' else 'Çalışan' }})</span>
+                <a href="/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Çıkış</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-success">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="stats-grid">
+           {% if user_role == 'yonetici' %}
+            <div class="stat-card success">
+                <div class="stat-icon"><i class="fas fa-video"></i></div>
+                <div class="stat-number">{{ stats.active_cameras }}/{{ stats.total_cameras }}</div>
+                <div class="stat-label">Aktif Kameralar</div>
+            </div>
+
+            <div class="stat-card warning">
+                <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                <div class="stat-number">{{ stats.today_violations }}</div>
+                <div class="stat-label">Bugünkü İhlaller</div>
+            </div>
+
+            <div class="stat-card danger">
+                <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
+                <div class="stat-number">{{ stats.unresolved_violations }}</div>
+                <div class="stat-label">Çözülmemiş İhlaller</div>
+            </div>
+           {% else %}
+            <div class="stat-card warning">
+                <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                <div class="stat-number">{{ stats.my_today_violations }}</div>
+                <div class="stat-label">Bugünkü İhlallerim</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-history"></i></div>
+                <div class="stat-number">{{ stats.my_total_violations }}</div>
+                <div class="stat-label">Toplam İhlallerim</div>
+            </div>
+
+            <div class="stat-card {{ 'success' if stats.safety_score >= 70 else 'warning' if stats.safety_score >= 40 else 'danger' }}">
+                <div class="stat-icon"><i class="fas fa-shield-alt"></i></div>
+                <div class="stat-number">{{ stats.safety_score }}%</div>
+                <div class="stat-label">Güvenlik Puanım</div>
+            </div>
+           {% endif %}
+        </div>
+
+        <div class="menu-grid">
+            {% if user_role == 'yonetici' %}
+            <a href="/cameras" class="menu-card">
+                <div class="menu-icon"><i class="fas fa-video"></i></div>
+                <div class="menu-title">Kamera Yönetimi</div>
+                <div class="menu-desc">Kamera ekleme ve yapılandırma</div>
+            </a>
+
+            <a href="/live_monitoring" class="menu-card">
+                <div class="menu-icon"><i class="fas fa-eye"></i></div>
+                <div class="menu-title">Canlı İzleme</div>
+                <div class="menu-desc">Gerçek zamanlı görüntü analizi</div>
+            </a>
+
+            <a href="/reports" class="menu-card">
+                <div class="menu-icon"><i class="fas fa-chart-bar"></i></div>
+                <div class="menu-title">Raporlar</div>
+                <div class="menu-desc">İhlal raporları ve istatistikler</div>
+            </a>
+
+            <div class="menu-card" onclick="simulateViolation()">
+                <div class="menu-icon"><i class="fas fa-flask"></i></div>
+                <div class="menu-title">Test İhlali</div>
+                <div class="menu-desc">Sistem testi için ihlal simüle et</div>
+            </div>
+            {% else %}
+            <a href="/reports" class="menu-card">
+                <div class="menu-icon"><i class="fas fa-chart-bar"></i></div>
+                <div class="menu-title">İhlal Raporlarım</div>
+                <div class="menu-desc">Kişisel ihlal geçmişi</div>
+            </a>
+            {% endif %}
+
+            <div class="menu-card" onclick="openPasswordModal()">
+                <div class="menu-icon"><i class="fas fa-key"></i></div>
+                <div class="menu-title">Şifre Değiştir</div>
+                <div class="menu-desc">Hesap güvenliği ve şifre yenileme</div>
+            </div>
+
+            {% if user_role != 'yonetici' %}
+            <a href="/notifications" class="menu-card">
+                <div class="menu-icon"><i class="fas fa-bell"></i></div>
+                <div class="menu-title">Uyarılarım</div>
+                <div class="menu-desc">PPE uyarıları ve bildirimler</div>
+            </a>
+            {% endif %}
+
+            <a href="/help" class="menu-card">
+                <div class="menu-icon"><i class="fas fa-info-circle"></i></div>
+                <div class="menu-title">Yardım</div>
+                <div class="menu-desc">Sistem kullanım kılavuzu</div>
+            </a>
+        </div>
+
+        {% if recent_violations %}
+        <div class="recent-activity">
+            <div class="activity-header">
+                <h3><i class="fas fa-history"></i> Son İhlaller</h3>
+            </div>
+            {% for violation in recent_violations %}
+            <div class="activity-item">
+                <div class="activity-icon">
+                    <i class="fas fa-exclamation"></i>
+                </div>
+                <div class="activity-content">
+                    <strong>{{ violation.violation_type }}</strong> - {{ violation.camera_name or 'Bilinmiyor' }}
+                    {% if user_role == 'yonetici' and violation.user_name %}
+                        <br><small>Kullanıcı: {{ violation.user_name }}</small>
+                    {% endif %}
+                    <div class="activity-time">{{ violation.detected_at }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Şifre Değiştirme Modal -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 20px;"><i class="fas fa-key"></i> Şifre Değiştir</h3>
+            <form method="POST" action="/change_password">
+                <div class="form-group">
+                    <label for="current_password">Mevcut Şifre:</label>
+                    <input type="password" id="current_password" name="current_password" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="new_password">Yeni Şifre:</label>
+                    <input type="password" id="new_password" name="new_password" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm_password">Yeni Şifre (Tekrar):</label>
+                    <input type="password" id="confirm_password" name="confirm_password" class="form-input" required>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Kaydet
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="closePasswordModal()">
+                        <i class="fas fa-times"></i> İptal
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Anlık veri güncelleme
+        function updateStats() {
+            fetch('/api/stats')
+                .then(response => response.json())
+                .then(data => {
+                    // İstatistikleri güncelle
+                    console.log('Stats updated:', data);
+                })
+                .catch(error => console.log('Veri güncellenemiyor:', error));
+        }
+
+        // Test ihlali oluşturma
+        function simulateViolation() {
+            if (confirm('Test ihlali oluşturulsun mu?')) {
+                fetch('/api/simulate_violation', { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert(data.message);
+                            location.reload();
+                        }
+                    });
+            }
+        }
+
+        // Şifre değiştirme modal fonksiyonları
+        const passwordModal = document.getElementById('passwordModal');
+        
+        // Başlangıçta modalı gizle
+        if (passwordModal) {
+            passwordModal.style.display = 'none';
+        }
+
+        function openPasswordModal() {
+            if (passwordModal) {
+                passwordModal.style.display = 'block';
+            }
+        }
+
+        function closePasswordModal() {
+            if (passwordModal) {
+                passwordModal.style.display = 'none';
+            }
+        }
+
+        // Modal dışına tıklanınca kapat
+        window.onclick = function(event) {
+            if (event.target == passwordModal) {
+                passwordModal.style.display = 'none';
+            }
+        }
+
+        // Form doğrulama
+        const passwordForm = document.querySelector('#passwordModal form');
+        if (passwordForm) {
+            passwordForm.addEventListener('submit', function(e) {
+                const newPassword = document.getElementById('new_password').value;
+                const confirmPassword = document.getElementById('confirm_password').value;
+                
+                if (newPassword !== confirmPassword) {
+                    e.preventDefault();
+                    alert('Yeni şifreler eşleşmiyor!');
+                    return false;
+                }
+                
+                if (newPassword.length < 6) {
+                    e.preventDefault();
+                    alert('Şifre en az 6 karakter olmalıdır!');
+                    return false;
+                }
+            });
+        }
+
+        // Sayfa yüklendiğinde ve her 30 saniyede bir güncelle
+        updateStats();
+        setInterval(updateStats, 30000);
+    </script>
+</body>
+</html>
+'''
