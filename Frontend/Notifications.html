@@ -40,5 +40,17 @@
             </div>
         {% endif %}
     </div>
+  <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
+<script>
+  // Backend'deki Socket.IO server'ına bağlan
+  const socket = io("http://localhost:5000");
+
+  // 'new_violation' isimli event dinleniyor
+  socket.on("new_violation", (data) => {
+    alert(data.message); // Gelen mesaj alert ile gösteriliyor
+    // İstersen burada DOM'a yeni bir bildirim kartı da ekleyebilirsin
+  });
+</script>
+  
 </body>
 </html>
