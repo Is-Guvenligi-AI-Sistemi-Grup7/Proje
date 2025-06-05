@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from DataAccess.Concrete.database import get_db
 from Entities.Concrete.ViolationType import Violation
+from sqlalchemy import text
 
 app = FastAPI()
 
@@ -46,8 +47,6 @@ async def dashboard():
 
 Base.metadata.create_all(bind=engine)
 
-
-
 router = APIRouter(prefix="/api/health", tags=["Health Check"])
 
 @router.get("/db")
@@ -69,7 +68,7 @@ engine = create_engine(DATABASE_URL)
 
 try:
     with engine.connect() as connection:
-        result = connection.execute("SELECT * FROM users LIMIT 5;")
+        result = connection.execute(text("SELECT * FROM kullanicilar LIMIT 5;"))
         for row in result:
             print(row)
 except Exception as e:
