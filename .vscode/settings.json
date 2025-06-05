@@ -1,0 +1,8 @@
+{
+    "python.analysis.extraPaths": [
+        "./Backend/DataAccess/Abstract",
+        "./Backend/Entities/Concrete",
+        "./Backend/Entities/Concrete",
+        "./Backend/Core/Entities/Concrete"
+    ]
+}

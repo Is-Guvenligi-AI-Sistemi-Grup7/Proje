@@ -1,6 +1,12 @@
 from fastapi import FastAPI, Form, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
+from DataAccess.Concrete.database import engine, Base
+from Entities.Concrete import ViolationType, Camera  # modeller
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+from DataAccess.Concrete.database import get_db
+from Entities.Concrete.ViolationType import Violation
 
 app = FastAPI()
 
@@ -36,3 +42,36 @@ async def login(username: str = Form(...), password: str = Form(...), role: str 
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard():
     return "<h1>Dashboard Sayfası</h1><p>Giriş başarılı.</p>"
+
+
+Base.metadata.create_all(bind=engine)
+
+
+
+router = APIRouter(prefix="/api/health", tags=["Health Check"])
+
+@router.get("/db")
+def check_db_connection(db: Session = Depends(get_db)):
+    try:
+        db.query(Violation).first()
+        return {"status": "success", "message": "Database is connected and responsive"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+import psycopg2
+from psycopg2 import sql, OperationalError
+DATABASE_URL = "postgresql+psycopg2://postgres:123456@localhost:5432/is_guvenligi"
+
+
+from sqlalchemy import create_engine
+
+engine = create_engine(DATABASE_URL)
+
+try:
+    with engine.connect() as connection:
+        result = connection.execute("SELECT * FROM users LIMIT 5;")
+        for row in result:
+            print(row)
+except Exception as e:
+    print("Bağlantı hatası:", e)
+
