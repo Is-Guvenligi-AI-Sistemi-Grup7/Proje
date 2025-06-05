@@ -47,7 +47,7 @@ def tabloyu_olustur():
         
         # Kullanıcılar tablosu
         cur.execute('''
-            CREATE TABLE IF NOT EXISTS kullanicilar (
+            CREATE TABLE IF NOT EXISTS bot_kullanicilar (
                 chat_id BIGINT PRIMARY KEY,
                 ad_soyad VARCHAR(100) NOT NULL,
                 mail VARCHAR(100) NOT NULL,
@@ -100,7 +100,7 @@ def kullanici_kaydet(chat_id, ad_soyad, mail, departman):
         cur = conn.cursor()
         
         cur.execute('''
-            INSERT INTO kullanicilar (chat_id, ad_soyad, mail, departman)
+            INSERT INTO bot_kullanicilar (chat_id, ad_soyad, mail, departman)
             VALUES (%s, %s, %s, %s)
             ON CONFLICT (chat_id) 
             DO UPDATE SET 
@@ -125,7 +125,7 @@ def kullanici_var_mi(chat_id):
         conn = connection_pool.getconn()
         cur = conn.cursor()
         
-        cur.execute('SELECT chat_id FROM kullanicilar WHERE chat_id = %s AND aktif = TRUE', (chat_id,))
+        cur.execute('SELECT chat_id FROM bot_kullanicilar WHERE chat_id = %s AND aktif = TRUE', (chat_id,))
         result = cur.fetchone()
         return result is not None
         
@@ -142,7 +142,7 @@ def tum_kullanicilari_getir():
         conn = connection_pool.getconn()
         cur = conn.cursor()
         
-        cur.execute('SELECT chat_id, ad_soyad, departman FROM kullanicilar WHERE aktif = TRUE')
+        cur.execute('SELECT chat_id, ad_soyad, departman FROM bot_kullanicilar WHERE aktif = TRUE')
         users = cur.fetchall()
         return users
         
@@ -159,7 +159,7 @@ def departman_kullanicilari_getir(departman):
         conn = connection_pool.getconn()
         cur = conn.cursor()
         
-        cur.execute('SELECT chat_id, ad_soyad FROM kullanicilar WHERE departman = %s AND aktif = TRUE', (departman,))
+        cur.execute('SELECT chat_id, ad_soyad FROM bot_kullanicilar WHERE departman = %s AND aktif = TRUE', (departman,))
         users = cur.fetchall()
         return users
         
@@ -176,7 +176,7 @@ def kullanici_bilgisi_getir(chat_id):
         conn = connection_pool.getconn()
         cur = conn.cursor()
         
-        cur.execute('SELECT * FROM kullanicilar WHERE chat_id = %s', (chat_id,))
+        cur.execute('SELECT * FROM bot_kullanicilar WHERE chat_id = %s', (chat_id,))
         kullanici = cur.fetchone()
         return kullanici
         
@@ -443,11 +443,11 @@ async def istatistikler_goster(update: Update, context: ContextTypes.DEFAULT_TYP
         cur = conn.cursor()
         
         # Toplam kullanıcı sayısı
-        cur.execute('SELECT COUNT(*) FROM kullanicilar WHERE aktif = TRUE')
+        cur.execute('SELECT COUNT(*) FROM bot_kullanicilar WHERE aktif = TRUE')
         toplam_kullanici = cur.fetchone()[0]
         
         # Departman dağılımı
-        cur.execute('SELECT departman, COUNT(*) FROM kullanicilar WHERE aktif = TRUE GROUP BY departman')
+        cur.execute('SELECT departman, COUNT(*) FROM bot_kullanicilar WHERE aktif = TRUE GROUP BY departman')
         departman_dagilimi = cur.fetchall()
         
         # Son 7 günde gönderilen bildirimler
